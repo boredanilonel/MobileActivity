@@ -103,6 +103,145 @@
             android:textAlignment="center"
             android:layout_marginBottom="12dp"/>
 
+        <!-- Дата рождения -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Дата рождения:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp"/>
+
+        <!-- Переключатель способов ввода даты -->
+        <RadioGroup
+            android:id="@+id/rgDateInputType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <RadioButton
+                android:id="@+id/rbCalendar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Календарь"
+                android:checked="true"/>
+
+            <RadioButton
+                android:id="@+id/rbManual"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Вручную"/>
+        </RadioGroup>
+
+        <!-- Ручной ввод даты -->
+        <LinearLayout
+            android:id="@+id/llManualDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:layout_marginBottom="8dp">
+
+            <EditText
+                android:id="@+id/etDay"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="День"
+                android:inputType="number"
+                android:maxLength="2"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="/"
+                android:textSize="18sp"
+                android:padding="8dp"/>
+
+            <EditText
+                android:id="@+id/etMonth"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Месяц"
+                android:inputType="number"
+                android:maxLength="2"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="/"
+                android:textSize="18sp"
+                android:padding="8dp"/>
+
+            <EditText
+                android:id="@+id/etYear"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:hint="Год"
+                android:inputType="number"
+                android:maxLength="4"/>
+        </LinearLayout>
+
+        <!-- Календарь -->
+        <CalendarView
+            android:id="@+id/cvBirthDate"
+            android:layout_width="match_parent"
+            android:layout_height="280dp"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Знак зодиака -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Знак зодиака:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"/>
+
+        <ImageView
+            android:id="@+id/ivZodiac"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:src="@mipmap/ic_launcher"
+            android:contentDescription="Знак зодиака"
+            android:layout_marginBottom="12dp"/>
+
+        <TextView
+            android:id="@+id/tvZodiacName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginBottom="20dp"/>
+
+        <!-- Кнопка регистрации -->
+        <Button
+            android:id="@+id/btnRegister"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Зарегистрироваться"
+            android:textSize="16sp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Вывод данных -->
+        <TextView
+            android:id="@+id/tvOutput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:text="Данные будут отображены здесь..."
+            android:textColor="@android:color/black"
+            android:background="@android:color/darker_gray"
+            android:padding="12dp"/>
+
     </LinearLayout>
 
 </ScrollView>
