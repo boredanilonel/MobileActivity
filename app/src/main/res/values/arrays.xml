@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="courses">
+        <item>1 курс</item>
+        <item>2 курс</item>
+        <item>3 курс</item>
+        <item>4 курс</item>
+        <item>5 курс</item>
+        <item>6 курс</item>
+    </string-array>
+
+    <string-array name="difficulty_levels">
+        <item>Очень легкий</item>
+        <item>Легкий</item>
+        <item>Ниже среднего</item>
+        <item>Средний</item>
+        <item>Выше среднего</item>
+        <item>Сложный</item>
+        <item>Очень сложный</item>
+        <item>Эксперт</item>
+        <item>Мастер</item>
+        <item>Легендарный</item>
+    </string-array>
+</resources>
