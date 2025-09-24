@@ -1,108 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    tools:context=".MainActivity">
+    android:orientation="vertical">
 
-    <LinearLayout
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="12dp"
-        tools:ignore="MissingConstraints">
+        app:tabMode="fixed"
+        app:tabGravity="fill"/>
 
-        <!-- ФИО -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="ФИО:"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp"/>
-
-        <EditText
-            android:id="@+id/etFullName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Введите ФИО"
-            android:inputType="textCapWords"
-            android:layout_marginBottom="12dp"/>
-
-        <!-- Пол -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Пол:"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp"/>
-
-        <RadioGroup
-            android:id="@+id/rgGender"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="12dp">
-
-            <RadioButton
-                android:id="@+id/rbMale"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Мужской"/>
-
-            <RadioButton
-                android:id="@+id/rbFemale"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Женский"/>
-        </RadioGroup>
-
-        <!-- Курс -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Курс:"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp"/>
-
-        <Spinner
-            android:id="@+id/spCourse"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"/>
-
-        <!-- Уровень сложности -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Уровень сложности:"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp"/>
-
-        <SeekBar
-            android:id="@+id/sbDifficulty"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="10"
-            android:progress="5"
-            android:layout_marginBottom="4dp"/>
-
-        <TextView
-            android:id="@+id/tvDifficultyValue"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Средний (5)"
-            android:textAlignment="center"
-            android:layout_marginBottom="12dp"/>
-
-    </LinearLayout>
-
-</ScrollView>
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+</LinearLayout>
