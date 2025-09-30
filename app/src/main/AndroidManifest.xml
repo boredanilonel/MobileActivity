@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.zhuk">
 
     <application
         android:allowBackup="true"
@@ -10,16 +11,54 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Zhuk">
+        android:theme="@style/Theme.Zhuk"
+        tools:targetApi="31">
+
+        <!-- ГЛАВНОЕ МЕНЮ -->
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".MenuActivity"
+            android:label="Жуки - Главное меню"
+            android:exported="true"
+            android:theme="@style/Theme.Zhuk">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- ИГРОВАЯ АКТИВНОСТЬ -->
+        <activity
+            android:name=".GameActivity"
+            android:label="Игра Жуки"
+            android:screenOrientation="portrait"
+            android:exported="false"
+/>
+
+        <!-- ОТДЕЛЬНЫЕ АКТИВНОСТИ ДЛЯ КАЖДОГО РАЗДЕЛА -->
+        <activity
+            android:name=".RegistrationActivity"
+            android:label="Регистрация игрока"
+            android:exported="false"
+            android:theme="@style/Theme.Zhuk" />
+
+        <activity
+            android:name=".RulesActivity"
+            android:label="Правила игры"
+            android:exported="false"
+            android:theme="@style/Theme.Zhuk" />
+
+        <activity
+            android:name=".AuthorsActivity"
+            android:label="Авторы проекта"
+            android:exported="false"
+            android:theme="@style/Theme.Zhuk" />
+
+        <activity
+            android:name=".SettingsActivity"
+            android:label="Настройки игры"
+            android:exported="false"
+            android:theme="@style/Theme.Zhuk" />
+
     </application>
 
 </manifest>

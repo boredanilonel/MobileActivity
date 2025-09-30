@@ -2,7 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="#FFFFFF">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,8 +15,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Скорость игры"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="#333333"
             android:layout_marginBottom="8dp"/>
 
         <SeekBar
@@ -30,15 +32,18 @@
             android:layout_height="wrap_content"
             android:text="5 ед."
             android:textAlignment="center"
-            android:layout_marginBottom="16dp"/>
+            android:textSize="16sp"
+            android:textColor="#666666"
+            android:layout_marginBottom="20dp"/>
 
         <!-- Максимальное количество тараканов -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Максимальное количество тараканов"
-            android:textSize="16sp"
+            android:text="Максимальное количество жуков"
+            android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="#333333"
             android:layout_marginBottom="8dp"/>
 
         <SeekBar
@@ -53,15 +58,18 @@
             android:layout_height="wrap_content"
             android:text="10 шт."
             android:textAlignment="center"
-            android:layout_marginBottom="16dp"/>
+            android:textSize="16sp"
+            android:textColor="#666666"
+            android:layout_marginBottom="20dp"/>
 
         <!-- Интервал появления бонусов -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Интервал появления бонусов"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="#333333"
             android:layout_marginBottom="8dp"/>
 
         <SeekBar
@@ -76,15 +84,18 @@
             android:layout_height="wrap_content"
             android:text="30 сек."
             android:textAlignment="center"
-            android:layout_marginBottom="16dp"/>
+            android:textSize="16sp"
+            android:textColor="#666666"
+            android:layout_marginBottom="20dp"/>
 
         <!-- Длительность раунда -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Длительность раунда"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="#333333"
             android:layout_marginBottom="8dp"/>
 
         <SeekBar
@@ -98,7 +109,55 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="60 сек."
-            android:textAlignment="center"/>
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:textColor="#666666"
+            android:layout_marginBottom="30dp"/>
+
+        <!-- Кнопки -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="20dp">
+
+            <Button
+                android:id="@+id/btnApply"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="✅ Применить"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:background="@drawable/button_apply_background"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/btnReset"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="🔄 Сбросить"
+                android:textSize="16sp"
+                android:background="@drawable/button_reset_background"
+                android:textColor="#FFFFFF" />
+
+        </LinearLayout>
+
+        <!-- Информация о настройках -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="⚡ Настройки применяются сразу после нажатия кнопки 'Применить'"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:gravity="center"
+            android:padding="12dp"
+            android:background="#F5F5F5"
+            android:layout_marginBottom="10dp"/>
 
     </LinearLayout>
 </ScrollView>
