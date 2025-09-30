@@ -1,6 +1,8 @@
 package com.example.zhuk;
 
 import android.os.Bundle;
+import android.view.Menu;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -25,7 +27,11 @@ public class MainActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.viewPager);
         tabLayout = findViewById(R.id.tabLayout);
     }
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.game_menu, menu); // Убедитесь что R.menu.game_menu
+        return true;
+    }
     private void setupViewPager() {
         ViewPagerAdapter adapter = new ViewPagerAdapter(this);
         adapter.addFragment(new FragmentRegistration(), "Регистрация");

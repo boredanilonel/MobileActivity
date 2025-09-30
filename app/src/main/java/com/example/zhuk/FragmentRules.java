@@ -25,7 +25,6 @@ public class FragmentRules extends Fragment {
     }
 
     private void setupWebView() {
-        // Включаем поддержку JavaScript (если нужно)
         webViewRules.getSettings().setJavaScriptEnabled(true);
 
         // Отключаем масштабирование

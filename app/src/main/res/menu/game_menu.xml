@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_restart"
+        android:title="🔄 Перезапуск"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_settings"
+        android:title="⚙️ Настройки"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_authors"
+        android:title="👥 Авторы"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_rules"
+        android:title="📚 Правила"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_exit"
+        android:title="🚪 Выход"
+        app:showAsAction="never" />
+
+</menu>
