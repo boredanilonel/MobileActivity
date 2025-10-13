@@ -68,6 +68,10 @@ public class GameActivity extends AppCompatActivity {
     private void showGameResults() {
         if (!showingResults) return;
 
+        // Сохраняем результат в базу данных
+        int gameDuration = gameManager.getRoundDuration(); // Длительность раунда в секундах
+        gameManager.saveGameResult(gameView.getScore(), gameDuration);
+
         String result = "🎮 Игра завершена!\n\n" +
                 "🏆 Очки: " + gameView.getScore() + "\n" +
                 "🎯 Промахи: " + gameView.getMisses() + "\n" +
@@ -145,6 +149,7 @@ public class GameActivity extends AppCompatActivity {
             gameHandler.removeCallbacks(gameRunnable);
         }
         gameManager.saveHighScore(gameView.getScore());
+        gameView.cleanup(); // Очищаем ресурсы
     }
 
     @Override
@@ -163,5 +168,6 @@ public class GameActivity extends AppCompatActivity {
         if (gameHandler != null) {
             gameHandler.removeCallbacks(gameRunnable);
         }
+        gameView.cleanup(); // Очищаем ресурсы
     }
 }

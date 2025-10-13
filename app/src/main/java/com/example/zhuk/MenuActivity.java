@@ -60,6 +60,14 @@ public class MenuActivity extends AppCompatActivity {
                 openRules();
             }
         });
+
+        Button btnRecords = findViewById(R.id.btnRecords);
+        btnRecords.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openRecords();
+            }
+        });
     }
 
     private void startGame() {
@@ -84,6 +92,11 @@ public class MenuActivity extends AppCompatActivity {
 
     private void openRules() {
         Intent intent = new Intent(this, RulesActivity.class);
+        startActivity(intent);
+    }
+
+    private void openRecords() {
+        Intent intent = new Intent(this, RecordsActivity.class);
         startActivity(intent);
     }
 }

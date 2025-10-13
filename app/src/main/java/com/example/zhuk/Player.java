@@ -1,10 +1,13 @@
 package com.example.zhuk;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
+@Entity(tableName = "players")
 public class Player {
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+
     private String fullName;
     private String gender;
     private String course;
@@ -12,11 +15,12 @@ public class Player {
     private long birthDate;
     private String zodiacSign;
 
+    // Конструктор по умолчанию
     public Player() {
     }
 
-    public Player(String fullName, String gender, String course,
-                  int difficultyLevel, long birthDate, String zodiacSign) {
+    // Конструктор для создания нового игрока
+    public Player(String fullName, String gender, String course, int difficultyLevel, long birthDate, String zodiacSign) {
         this.fullName = fullName;
         this.gender = gender;
         this.course = course;
@@ -26,6 +30,9 @@ public class Player {
     }
 
     // Геттеры и сеттеры
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }
 
@@ -46,14 +53,6 @@ public class Player {
 
     @Override
     public String toString() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
-        String formattedDate = sdf.format(new Date(birthDate));
-
-        return "ФИО: " + fullName + "\n" +
-                "Пол: " + gender + "\n" +
-                "Курс: " + course + "\n" +
-                "Уровень сложности: " + difficultyLevel + "\n" +
-                "Дата рождения: " + formattedDate + "\n" +
-                "Знак зодиака: " + zodiacSign;
+        return fullName + " (" + zodiacSign + ")";
     }
 }

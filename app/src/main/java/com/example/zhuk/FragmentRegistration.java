@@ -47,6 +47,12 @@ public class FragmentRegistration extends Fragment {
     private EditText etMonth;
     private EditText etYear;
 
+    private Spinner spExistingPlayers;
+    private Button btnSelectExisting;
+    private LinearLayout llNewPlayerForm;
+    private RadioGroup rgPlayerSelection;
+    private TextView tvExistingPlayersLabel;
+
     private String[] courses;
     private String[] difficultyLevels;
 
@@ -259,6 +265,7 @@ public class FragmentRegistration extends Fragment {
         ivZodiac.setImageResource(resourceId);
     }
 
+    // В методе registerPlayer() добавляем сохранение в БД
     private void registerPlayer() {
         String fullName = etFullName.getText().toString().trim();
 
@@ -277,6 +284,7 @@ public class FragmentRegistration extends Fragment {
         long birthDate = birthCalendar.getTimeInMillis();
         String zodiacSign = calculateZodiacSign(birthCalendar);
 
+        // Проверяем заполнение обязательных полей
         if (fullName.isEmpty()) {
             Toast.makeText(getContext(), "Введите ФИО", Toast.LENGTH_SHORT).show();
             return;
@@ -287,6 +295,7 @@ public class FragmentRegistration extends Fragment {
             return;
         }
 
+        // Проверяем ручной ввод даты
         if (rgDateInputType.getCheckedRadioButtonId() == R.id.rbManual) {
             if (etDay.getText().toString().isEmpty() ||
                     etMonth.getText().toString().isEmpty() ||
@@ -296,14 +305,29 @@ public class FragmentRegistration extends Fragment {
             }
         }
 
+        // Создаем объект игрока
         Player player = new Player(fullName, gender, course, difficultyLevel, birthDate, zodiacSign);
 
-        tvOutput.setText(player.toString());
-        updateZodiacSign(birthCalendar);
+        // Сохраняем в базу данных
+        GameManager gameManager = new GameManager();
+        gameManager.initialize(getContext());
+        gameManager.savePlayer(player, new GameManager.PlayerSaveCallback() {
+            @Override
+            public void onPlayerSaved(int playerId) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Устанавливаем текущего игрока
+                        gameManager.setCurrentPlayer(playerId);
 
-        savePlayerData(player);
+                        tvOutput.setText("Игрок зарегистрирован!\n\n" + player.toString());
+                        updateZodiacSign(birthCalendar);
 
-        Toast.makeText(getContext(), "Регистрация завершена!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Регистрация завершена! ID: " + playerId, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
     }
 
     private void savePlayerData(Player player) {
