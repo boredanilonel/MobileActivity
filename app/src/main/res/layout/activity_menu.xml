@@ -68,6 +68,17 @@
         android:textColor="#FFFFFF"
         android:layout_marginBottom="40dp" />
 
+    <!-- Добавляем после кнопки Правила -->
+    <Button
+        android:id="@+id/btnRecords"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
+        android:text="🏆 РЕКОРДЫ"
+        android:textSize="18sp"
+        android:background="@drawable/button_background"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="20dp" />
+
     <TextView
         android:id="@+id/tvHighScore"
         android:layout_width="wrap_content"

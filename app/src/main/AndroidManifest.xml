@@ -17,7 +17,7 @@
         <!-- ГЛАВНОЕ МЕНЮ -->
         <activity
             android:name=".MenuActivity"
-            android:label="Жуки - Главное меню"
+            android:label="Жуки"
             android:exported="true"
             android:theme="@style/Theme.Zhuk">
             <intent-filter>
@@ -58,6 +58,11 @@
             android:label="Настройки игры"
             android:exported="false"
             android:theme="@style/Theme.Zhuk" />
+
+        <activity
+            android:name=".RecordsActivity"
+            android:label="Таблица рекордов"
+            android:exported="false" />
 
     </application>
 
