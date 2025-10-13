@@ -136,9 +136,12 @@ public class GameManager {
     public interface PlayersCallback {
         void onPlayersLoaded(List<Player> players);
     }
+<<<<<<< HEAD
     public interface CurrentPlayerCallback {
         void onCurrentPlayerSet(boolean success);
     }
+=======
+>>>>>>> a1eefc9a6880679cf72d0dc0c533ada8b233deb9
 
     @SuppressLint("StaticFieldLeak")
     public void getAllPlayers(PlayersCallback callback) {
@@ -174,6 +177,7 @@ public class GameManager {
     public interface PlayerSaveCallback {
         void onPlayerSaved(int playerId);
     }
+<<<<<<< HEAD
     public interface ClearCallback {
         void onClearCompleted();
     }
@@ -190,4 +194,6 @@ public class GameManager {
             callback.onClearCompleted();
         });
     }
+=======
+>>>>>>> a1eefc9a6880679cf72d0dc0c533ada8b233deb9
 }

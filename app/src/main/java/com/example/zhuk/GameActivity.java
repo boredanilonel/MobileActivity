@@ -68,10 +68,19 @@ public class GameActivity extends AppCompatActivity {
     private void showGameResults() {
         if (!showingResults) return;
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> a1eefc9a6880679cf72d0dc0c533ada8b233deb9
         // Сохраняем результат в базу данных
         int gameDuration = gameManager.getRoundDuration(); // Длительность раунда в секундах
         gameManager.saveGameResult(gameView.getScore(), gameDuration);
 
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> 88605711446fabc01e22bcc44a491cebf1c9f072
+>>>>>>> a1eefc9a6880679cf72d0dc0c533ada8b233deb9
         String result = "🎮 Игра завершена!\n\n" +
                 "🏆 Очки: " + gameView.getScore() + "\n" +
                 "🎯 Промахи: " + gameView.getMisses() + "\n" +

@@ -2,6 +2,7 @@ package com.example.zhuk;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+<<<<<<< HEAD
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -10,10 +11,16 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView;
 import android.app.AlertDialog;
+=======
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+>>>>>>> a1eefc9a6880679cf72d0dc0c533ada8b233deb9
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +32,15 @@ public class RecordsActivity extends AppCompatActivity {
     private GameManager gameManager;
     private List<Player> allPlayers;
     private Player selectedPlayer;
+=======
+import java.util.List;
+
+public class RecordsActivity extends AppCompatActivity {
+
+    private ListView listViewRecords;
+    private TextView tvEmpty;
+    private GameManager gameManager;
+>>>>>>> a1eefc9a6880679cf72d0dc0c533ada8b233deb9
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,12 +57,16 @@ public class RecordsActivity extends AppCompatActivity {
 
         listViewRecords = findViewById(R.id.listViewRecords);
         tvEmpty = findViewById(R.id.tvEmpty);
+<<<<<<< HEAD
         spinnerPlayers = findViewById(R.id.spinnerPlayers);
         btnClear = findViewById(R.id.btnClear);
+=======
+>>>>>>> a1eefc9a6880679cf72d0dc0c533ada8b233deb9
 
         gameManager = new GameManager();
         gameManager.initialize(this);
 
+<<<<<<< HEAD
         setupPlayerSpinner();
         setupClearButton();
         loadAllRecords();
@@ -143,19 +163,39 @@ public class RecordsActivity extends AppCompatActivity {
     }
 
     private void loadAllRecords() {
+=======
+        loadRecords();
+    }
+
+    private void loadRecords() {
+>>>>>>> a1eefc9a6880679cf72d0dc0c533ada8b233deb9
         gameManager.getTopScores(50, new GameManager.ScoresCallback() {
             @Override
             public void onScoresLoaded(List<ScoreRecord> scores) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+<<<<<<< HEAD
                         updateRecordsList(scores);
+=======
+                        if (scores.isEmpty()) {
+                            tvEmpty.setText("Пока нет рекордов!\nСыграйте в игру чтобы установить первый рекорд.");
+                            listViewRecords.setVisibility(ListView.GONE);
+                            tvEmpty.setVisibility(TextView.VISIBLE);
+                        } else {
+                            RecordsAdapter adapter = new RecordsAdapter(RecordsActivity.this, scores);
+                            listViewRecords.setAdapter(adapter);
+                            listViewRecords.setVisibility(ListView.VISIBLE);
+                            tvEmpty.setVisibility(TextView.GONE);
+                        }
+>>>>>>> a1eefc9a6880679cf72d0dc0c533ada8b233deb9
                     }
                 });
             }
         });
     }
 
+<<<<<<< HEAD
     private void loadPlayerRecords(int playerId) {
         gameManager.getPlayerScores(playerId, new GameManager.ScoresCallback() {
             @Override
@@ -182,6 +222,8 @@ public class RecordsActivity extends AppCompatActivity {
         }
     }
 
+=======
+>>>>>>> a1eefc9a6880679cf72d0dc0c533ada8b233deb9
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {

@@ -2,13 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+<<<<<<< HEAD
     android:orientation="vertical"
     android:padding="16dp">
+=======
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+>>>>>>> a1eefc9a6880679cf72d0dc0c533ada8b233deb9
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+<<<<<<< HEAD
         android:background="?attr/colorPrimary"
         android:theme="?attr/actionBarTheme" />
 
@@ -62,5 +69,28 @@
         android:id="@+id/listViewRecords"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+=======
+        android:background="#4CAF50"
+        app:titleTextColor="#FFFFFF"
+        app:navigationIcon="@drawable/ic_arrow_back_white" />
+
+    <TextView
+        android:id="@+id/tvEmpty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Загрузка рекордов..."
+        android:textSize="18sp"
+        android:textColor="#666666"
+        android:gravity="center"
+        android:padding="32dp"
+        android:visibility="gone" />
+
+    <ListView
+        android:id="@+id/listViewRecords"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp" />
+>>>>>>> a1eefc9a6880679cf72d0dc0c533ada8b233deb9
 
 </LinearLayout>
