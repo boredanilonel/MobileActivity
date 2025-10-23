@@ -40,15 +40,14 @@ public class RecordsAdapter extends ArrayAdapter<ScoreRecord> {
             tvDifficulty.setText(record.getDifficultyName());
             tvDate.setText(record.getFormattedDate());
 
-            // Подсветка первых трех мест
             if (position == 0) {
-                convertView.setBackgroundColor(0x30FFD700); // Золотой
+                convertView.setBackgroundColor(0x30FFD700);
             } else if (position == 1) {
-                convertView.setBackgroundColor(0x30C0C0C0); // Серебряный
+                convertView.setBackgroundColor(0x30C0C0C0);
             } else if (position == 2) {
-                convertView.setBackgroundColor(0x30CD7F32); // Бронзовый
+                convertView.setBackgroundColor(0x30CD7F32);
             } else {
-                convertView.setBackgroundColor(0x00000000); // Прозрачный
+                convertView.setBackgroundColor(0x00000000);
             }
         }
 

@@ -26,8 +26,7 @@ public class ScoreRecord {
     private int score;
     private int difficultyLevel;
     private long date;
-    private int gameDuration; // в секундах
-
+    private int gameDuration;
     public ScoreRecord() {
     }
 
@@ -40,7 +39,6 @@ public class ScoreRecord {
         this.gameDuration = gameDuration;
     }
 
-    // Геттеры и сеттеры
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 

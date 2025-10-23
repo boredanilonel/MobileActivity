@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.zhuk">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -30,7 +32,7 @@
         <activity
             android:name=".GameActivity"
             android:label="Игра Жуки"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="false"
 />
 
@@ -63,6 +65,17 @@
             android:name=".RecordsActivity"
             android:label="Таблица рекордов"
             android:exported="false" />
+
+        <!-- Виджет -->
+        <receiver android:name=".GoldWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver>
 
     </application>
 

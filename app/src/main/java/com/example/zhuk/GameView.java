@@ -8,8 +8,10 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.media.MediaPlayer;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +40,7 @@ public class GameView extends View implements GyroscopeManager.GyroscopeListener
     private long lastBugSpawnTime;
     private long lastBonusSpawnTime;
     private static final long BUG_SPAWN_INTERVAL = 1500;
-    private static final long BONUS_SPAWN_INTERVAL = 15000; // 15 секунд
+    private static final long BONUS_SPAWN_INTERVAL = 15000;
 
     private Random random;
     private long gameStartTime;
@@ -48,9 +50,17 @@ public class GameView extends View implements GyroscopeManager.GyroscopeListener
     private MediaPlayer screamSound;
     private MediaPlayer bonusSound;
 
-    // Для гироскопа
     private float currentTiltX = 0;
     private float currentTiltY = 0;
+
+    private List<GoldenBug> goldenBugs;
+    private Bitmap goldenBugBitmap;
+    private long lastGoldenBugSpawnTime;
+    private static final long GOLDEN_BUG_SPAWN_INTERVAL = 20000;
+    private GoldRateService goldRateService;
+    private double currentGoldRate = 10946.8700;
+
+    private GameViewModel gameViewModel;
 
     public GameView(Context context) {
         super(context);
@@ -60,6 +70,65 @@ public class GameView extends View implements GyroscopeManager.GyroscopeListener
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
+    }
+    public void setGameViewModel(GameViewModel viewModel) {
+        this.gameViewModel = viewModel;
+        restoreStateFromViewModel();
+    }
+    public void saveStateToViewModel() {
+        if (gameViewModel != null) {
+            gameViewModel.setScore(score);
+            gameViewModel.setMisses(misses);
+            gameViewModel.setGameStartTime(gameStartTime);
+            gameViewModel.setLastBugSpawnTime(lastBugSpawnTime);
+            gameViewModel.setLastBonusSpawnTime(lastBonusSpawnTime);
+            gameViewModel.setGameOver(gameOver);
+
+            gameViewModel.setGyroscopeActive(gyroscopeManager.isGyroscopeActive());
+            gameViewModel.setGlobalFreeze(globalFreeze);
+            gameViewModel.setGlobalSpeedBoost(globalSpeedBoost);
+            gameViewModel.setFreezeEndTime(freezeEndTime);
+            gameViewModel.setSpeedBoostEndTime(speedBoostEndTime);
+        }
+    }
+    private void restoreStateFromViewModel() {
+        if (gameViewModel != null) {
+            score = gameViewModel.getScore();
+            misses = gameViewModel.getMisses();
+            gameStartTime = gameViewModel.getGameStartTime();
+            lastBugSpawnTime = gameViewModel.getLastBugSpawnTime();
+            lastBonusSpawnTime = gameViewModel.getLastBonusSpawnTime();
+            gameOver = gameViewModel.isGameOver();
+
+            if (gameViewModel.isGyroscopeActive()) {
+                gyroscopeManager.startGyroscope();
+                for (Bug bug : bugs) {
+                    bug.setAffectedByGyroscope(true);
+                }
+                for (GoldenBug goldenBug : goldenBugs) {
+                    goldenBug.setAffectedByGyroscope(true);
+                }
+            }
+
+            globalFreeze = gameViewModel.isGlobalFreeze();
+            globalSpeedBoost = gameViewModel.isGlobalSpeedBoost();
+            freezeEndTime = gameViewModel.getFreezeEndTime();
+            speedBoostEndTime = gameViewModel.getSpeedBoostEndTime();
+
+            if (globalSpeedBoost && System.currentTimeMillis() < speedBoostEndTime) {
+                long timeLeft = speedBoostEndTime - System.currentTimeMillis();
+                for (Bug bug : bugs) {
+                    bug.applySpeedBoost(timeLeft);
+                }
+            }
+
+            if (globalFreeze && System.currentTimeMillis() < freezeEndTime) {
+                long timeLeft = freezeEndTime - System.currentTimeMillis();
+                for (Bug bug : bugs) {
+                    bug.freeze(timeLeft);
+                }
+            }
+        }
     }
 
     private void init() {
@@ -80,17 +149,38 @@ public class GameView extends View implements GyroscopeManager.GyroscopeListener
 
         roundDuration = gameManager.getRoundDuration() * 1000;
 
-        // Инициализация гироскопа
         gyroscopeManager = new GyroscopeManager(getContext());
         gyroscopeManager.setListener(this);
+
+        goldenBugs = new ArrayList<>();
+        goldRateService = new GoldRateService(getContext());
+        loadGoldRate();
 
         loadBitmaps();
         setupPaints();
         setupSounds();
     }
 
+    private void loadGoldRate() {
+        goldRateService.loadGoldRate(new GoldRateService.GoldRateCallback() {
+            @Override
+            public void onGoldRateLoaded(double goldRate) {
+                currentGoldRate = goldRate;
+                Log.d("GameView", "Gold rate loaded from CBR: " + goldRate + " руб/г");
+
+                GoldWidget.updateAllWidgets(getContext());
+            }
+
+            @Override
+            public void onError(String error) {
+                double cachedRate = goldRateService.getCachedGoldRate();
+                currentGoldRate = cachedRate > 0 ? cachedRate : 0;
+                Log.e("GameView", "Failed to load gold rate: " + error + ", using: " + currentGoldRate);
+            }
+        });
+    }
+
     private void setupSounds() {
-        // Создаем звуки (добавьте файлы в res/raw/)
         screamSound = MediaPlayer.create(getContext(), R.raw.scream);
         bonusSound = MediaPlayer.create(getContext(), R.raw.bonus);
 
@@ -103,7 +193,6 @@ public class GameView extends View implements GyroscopeManager.GyroscopeListener
     }
 
     private void loadBitmaps() {
-        // Загрузка изображений жуков
         int[] bugResources = {R.drawable.bug1, R.drawable.bug2, R.drawable.bug3, R.drawable.bug4};
         for (int resId : bugResources) {
             Bitmap original = BitmapFactory.decodeResource(getResources(), resId);
@@ -111,12 +200,16 @@ public class GameView extends View implements GyroscopeManager.GyroscopeListener
             bugBitmaps.add(scaled);
         }
 
-        // Загрузка изображений бонусов
         int[] bonusResources = {R.drawable.bonus_gyro, R.drawable.bonus_speed, R.drawable.bonus_freeze};
         for (int resId : bonusResources) {
             Bitmap original = BitmapFactory.decodeResource(getResources(), resId);
             Bitmap scaled = Bitmap.createScaledBitmap(original, 150, 150, true);
             bonusBitmaps.add(scaled);
+        }
+
+        goldenBugBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.golden_bug);
+        if (goldenBugBitmap != null) {
+            goldenBugBitmap = Bitmap.createScaledBitmap(goldenBugBitmap, 120, 120, true);
         }
     }
 
@@ -146,22 +239,24 @@ public class GameView extends View implements GyroscopeManager.GyroscopeListener
         bonusPaint.setShadowLayer(3, 2, 2, Color.BLACK);
     }
 
+    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
         canvas.drawColor(Color.WHITE);
 
-        // Отрисовка бонусов
         for (Bonus bonus : bonuses) {
             bonus.draw(canvas);
         }
 
-        // Отрисовка жуков
         for (Bug bug : bugs) {
             bug.draw(canvas);
         }
 
-        // Отрисовка информации
+        for (GoldenBug goldenBug : goldenBugs) {
+            goldenBug.draw(canvas);
+        }
+
         int timeLeft = getRemainingTime();
 
         canvas.drawText("Очки: " + score, 20, 80, scorePaint);
@@ -169,28 +264,23 @@ public class GameView extends View implements GyroscopeManager.GyroscopeListener
         canvas.drawText("Время: " + timeLeft + "с", 20, 220, infoPaint);
         canvas.drawText("Жуков: " + bugs.size() + "/" + gameManager.getMaxBugs(), 20, 290, infoPaint);
 
-        // Отображение статуса гироскопа
         if (gyroscopeManager.isGyroscopeActive()) {
             long remaining = gyroscopeManager.getRemainingTime();
             canvas.drawText("🌀 Гироскоп: " + remaining + "с", 20, 360, bonusPaint);
-
-            // Воспроизводим звук крика при активном гироскопе
-            //playScreamSound();
         }
 
-        // Отображение статуса заморозки
         if (globalFreeze && System.currentTimeMillis() < freezeEndTime) {
             long remaining = (freezeEndTime - System.currentTimeMillis()) / 1000;
             canvas.drawText("❄️ Заморозка: " + remaining + "с", 20, 430, bonusPaint);
         }
 
-        // Отображение статуса ускорения
         if (globalSpeedBoost && System.currentTimeMillis() < speedBoostEndTime) {
             long remaining = (speedBoostEndTime - System.currentTimeMillis()) / 1000;
             canvas.drawText("⚡ Ускорение: " + remaining + "с", 20, 500, bonusPaint);
         }
 
-        // Отладочная информация
+        canvas.drawText("💰 Золото: " + (int)currentGoldRate + " руб/г", 20, 570, infoPaint);
+
         if (gameOver) {
             Paint gameOverPaint = new Paint();
             gameOverPaint.setColor(Color.RED);
@@ -209,7 +299,6 @@ public class GameView extends View implements GyroscopeManager.GyroscopeListener
 
             boolean hit = false;
 
-            // Сначала проверяем бонусы
             for (int i = bonuses.size() - 1; i >= 0; i--) {
                 Bonus bonus = bonuses.get(i);
                 if (bonus.isTouched(touchX, touchY)) {
@@ -220,7 +309,18 @@ public class GameView extends View implements GyroscopeManager.GyroscopeListener
                 }
             }
 
-            // Затем проверяем жуков
+            if (!hit) {
+                for (int i = goldenBugs.size() - 1; i >= 0; i--) {
+                    GoldenBug goldenBug = goldenBugs.get(i);
+                    if (goldenBug.isTouched(touchX, touchY)) {
+                        collectGoldenBug(goldenBug);
+                        goldenBugs.remove(i);
+                        hit = true;
+                        break;
+                    }
+                }
+            }
+
             if (!hit) {
                 for (int i = bugs.size() - 1; i >= 0; i--) {
                     Bug bug = bugs.get(i);
@@ -229,31 +329,37 @@ public class GameView extends View implements GyroscopeManager.GyroscopeListener
                         score += bug.getPoints();
                         hit = true;
                         bugs.remove(i);
-
                         break;
                     }
                 }
             }
 
-            // Штраф за промах
             if (!hit) {
                 misses++;
                 score = Math.max(0, score - 5);
             }
 
+            saveStateToViewModel();
             invalidate();
         }
         return true;
+    }
+
+    private void collectGoldenBug(GoldenBug goldenBug) {
+        goldenBug.kill();
+        int points = goldenBug.getPoints();
+        score += points;
+
+        Toast.makeText(getContext(), "💰 +" + points + " очков (золото)!", Toast.LENGTH_SHORT).show();
+        saveStateToViewModel();
     }
 
     private void collectBonus(Bonus bonus) {
         bonus.collect();
         score += bonus.getPoints();
 
-        // Воспроизводим звук бонуса
         playBonusSound();
 
-        // Активируем эффект бонуса
         switch (bonus.getType()) {
             case GYROSCOPE:
                 activateGyroscopeBonus();
@@ -265,49 +371,66 @@ public class GameView extends View implements GyroscopeManager.GyroscopeListener
                 activateFreeze();
                 break;
         }
+        saveStateToViewModel();
     }
 
     private void activateGyroscopeBonus() {
         gyroscopeManager.startGyroscope();
 
-        // Применяем эффект ко всем жукам (существующим и будущим)
+        if (gameViewModel != null) {
+            gameViewModel.setGyroscopeActive(true);
+            gameViewModel.setGyroscopeEndTime(System.currentTimeMillis() + 15000);
+        }
+
         for (Bug bug : bugs) {
             bug.setAffectedByGyroscope(true);
         }
+        for (GoldenBug goldenBug : goldenBugs) {
+            goldenBug.setAffectedByGyroscope(true);
+        }
 
-        // Воспроизводим звук крика при активации гироскопа
         playScreamSound();
     }
 
     private void activateSpeedBoost() {
         globalSpeedBoost = true;
-        speedBoostEndTime = System.currentTimeMillis() + 5000; // 5 секунд
+        speedBoostEndTime = System.currentTimeMillis() + 5000;
 
-        // Увеличиваем скорость всем жукам в 2 раза
+        if (gameViewModel != null) {
+            gameViewModel.setGlobalSpeedBoost(true);
+            gameViewModel.setSpeedBoostEndTime(speedBoostEndTime);
+        }
+
         for (Bug bug : bugs) {
             bug.applySpeedBoost(5000);
         }
 
-        // Запускаем таймер для отключения эффекта
         new android.os.Handler().postDelayed(() -> {
             globalSpeedBoost = false;
-            // Скорость вернется автоматически через checkEffects() в Bug
+            if (gameViewModel != null) {
+                gameViewModel.setGlobalSpeedBoost(false);
+            }
         }, 5000);
     }
 
     private void activateFreeze() {
         globalFreeze = true;
-        freezeEndTime = System.currentTimeMillis() + 3000; // 3 секунды
+        freezeEndTime = System.currentTimeMillis() + 3000;
 
-        // Замораживаем всех жуков
+        if (gameViewModel != null) {
+            gameViewModel.setGlobalFreeze(true);
+            gameViewModel.setFreezeEndTime(freezeEndTime);
+        }
+
         for (Bug bug : bugs) {
             bug.freeze(3000);
         }
 
-        // Запускаем таймер для отключения эффекта
         new android.os.Handler().postDelayed(() -> {
             globalFreeze = false;
-            // Разморозка произойдет автоматически через checkEffects() в Bug
+            if (gameViewModel != null) {
+                gameViewModel.setGlobalFreeze(false);
+            }
         }, 3000);
     }
 
@@ -330,32 +453,46 @@ public class GameView extends View implements GyroscopeManager.GyroscopeListener
     }
 
     public void update() {
-        if (gameOver) return;
+        if (gameOver) {
+            saveStateToViewModel();
+            return;
+        }
 
         if (System.currentTimeMillis() - gameStartTime > roundDuration) {
             gameOver = true;
+            if (gameViewModel != null) {
+                gameViewModel.setGameOver(true);
+            }
+            saveStateToViewModel();
             return;
         }
 
         long currentTime = System.currentTimeMillis();
 
-        // Создание новых жуков
         if (currentTime - lastBugSpawnTime > BUG_SPAWN_INTERVAL &&
                 bugs.size() < gameManager.getMaxBugs()) {
             spawnBug();
             lastBugSpawnTime = currentTime;
+            if (gameViewModel != null) {
+                gameViewModel.setLastBugSpawnTime(lastBugSpawnTime);
+            }
         }
 
-        // Создание бонусов каждые 15 секунд
         if (currentTime - lastBonusSpawnTime > BONUS_SPAWN_INTERVAL) {
             spawnBonus();
             lastBonusSpawnTime = currentTime;
+            if (gameViewModel != null) {
+                gameViewModel.setLastBonusSpawnTime(lastBonusSpawnTime);
+            }
         }
 
-        // Обновление гироскопа
+        if (currentTime - lastGoldenBugSpawnTime > GOLDEN_BUG_SPAWN_INTERVAL) {
+            spawnGoldenBug();
+            lastGoldenBugSpawnTime = currentTime;
+        }
+
         gyroscopeManager.update();
 
-        // Обновление бонусов
         for (int i = bonuses.size() - 1; i >= 0; i--) {
             Bonus bonus = bonuses.get(i);
             bonus.update();
@@ -364,7 +501,6 @@ public class GameView extends View implements GyroscopeManager.GyroscopeListener
             }
         }
 
-        // Обновление позиций жуков с учетом гироскопа
         for (int i = bugs.size() - 1; i >= 0; i--) {
             Bug bug = bugs.get(i);
             bug.update(getWidth(), getHeight(), currentTiltX, currentTiltY);
@@ -372,6 +508,18 @@ public class GameView extends View implements GyroscopeManager.GyroscopeListener
             if (!bug.isAlive()) {
                 bugs.remove(i);
             }
+        }
+
+        for (int i = goldenBugs.size() - 1; i >= 0; i--) {
+            GoldenBug goldenBug = goldenBugs.get(i);
+            goldenBug.update(getWidth(), getHeight(), currentTiltX, currentTiltY);
+            if (!goldenBug.isAlive()) {
+                goldenBugs.remove(i);
+            }
+        }
+
+        if (currentTime % 1000 < 16) {
+            saveStateToViewModel();
         }
 
         invalidate();
@@ -388,7 +536,6 @@ public class GameView extends View implements GyroscopeManager.GyroscopeListener
 
         Bug newBug = new Bug(bugBitmap, startX, startY, baseSpeed, gameSpeedSetting);
 
-        // Применяем активные эффекты к новому жуку
         if (gyroscopeManager.isGyroscopeActive()) {
             newBug.setAffectedByGyroscope(true);
         }
@@ -402,6 +549,22 @@ public class GameView extends View implements GyroscopeManager.GyroscopeListener
         }
 
         bugs.add(newBug);
+    }
+
+    private void spawnGoldenBug() {
+        if (goldenBugBitmap == null) return;
+
+        int x = random.nextInt(Math.max(1, getWidth() - goldenBugBitmap.getWidth()));
+        int y = random.nextInt(Math.max(1, getHeight() - goldenBugBitmap.getHeight()));
+        int baseSpeed = 2;
+
+        GoldenBug goldenBug = new GoldenBug(goldenBugBitmap, x, y, baseSpeed, currentGoldRate);
+
+        if (gyroscopeManager.isGyroscopeActive()) {
+            goldenBug.setAffectedByGyroscope(true);
+        }
+
+        goldenBugs.add(goldenBug);
     }
 
     private void spawnBonus() {
@@ -418,7 +581,6 @@ public class GameView extends View implements GyroscopeManager.GyroscopeListener
         bonuses.add(newBonus);
     }
 
-    // Реализация GyroscopeListener
     @Override
     public void onTiltChanged(float tiltX, float tiltY) {
         currentTiltX = tiltX;
@@ -427,11 +589,15 @@ public class GameView extends View implements GyroscopeManager.GyroscopeListener
 
     @Override
     public void onGyroscopeActivated() {
-        // Применяем эффект ко всем жукам (включая новых)
         for (Bug bug : bugs) {
             bug.setAffectedByGyroscope(true);
         }
-        //playScreamSound();
+        for (GoldenBug goldenBug : goldenBugs) {
+            goldenBug.setAffectedByGyroscope(true);
+        }
+        if (gameViewModel != null) {
+            gameViewModel.setGyroscopeActive(true);
+        }
     }
 
     @Override
@@ -439,9 +605,14 @@ public class GameView extends View implements GyroscopeManager.GyroscopeListener
         currentTiltX = 0;
         currentTiltY = 0;
 
-        // Отключаем эффект гироскопа у всех жуков
         for (Bug bug : bugs) {
             bug.setAffectedByGyroscope(false);
+        }
+        for (GoldenBug goldenBug : goldenBugs) {
+            goldenBug.setAffectedByGyroscope(false);
+        }
+        if (gameViewModel != null) {
+            gameViewModel.setGyroscopeActive(false);
         }
     }
 
@@ -454,6 +625,7 @@ public class GameView extends View implements GyroscopeManager.GyroscopeListener
             bonusSound.release();
         }
     }
+
     public int getScore() { return score; }
     public int getMisses() { return misses; }
     public boolean isGameOver() { return gameOver; }
@@ -466,14 +638,15 @@ public class GameView extends View implements GyroscopeManager.GyroscopeListener
     public void resetGame() {
         bugs.clear();
         bonuses.clear();
+        goldenBugs.clear();
         score = 0;
         misses = 0;
         lastBugSpawnTime = System.currentTimeMillis();
         lastBonusSpawnTime = System.currentTimeMillis();
+        lastGoldenBugSpawnTime = System.currentTimeMillis();
         gameStartTime = System.currentTimeMillis();
         gameOver = false;
 
-        // Сбрасываем все эффекты
         globalFreeze = false;
         globalSpeedBoost = false;
         freezeEndTime = 0;
@@ -482,8 +655,13 @@ public class GameView extends View implements GyroscopeManager.GyroscopeListener
         gyroscopeManager.stopGyroscope();
         currentTiltX = 0;
         currentTiltY = 0;
-
+        loadGoldRate();
         roundDuration = gameManager.getRoundDuration() * 1000;
+
+        // Сбрасываем ViewModel
+        if (gameViewModel != null) {
+            gameViewModel.resetGame();
+        }
 
         invalidate();
     }

@@ -1,33 +1,79 @@
 package com.example.zhuk;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 public class GameActivity extends AppCompatActivity {
     private GameView gameView;
     private GameManager gameManager;
+    private GameViewModel gameViewModel;
     private Handler gameHandler;
     private Runnable gameRunnable;
     private static final long UPDATE_INTERVAL = 16;
 
-    private boolean gameRunning = true;
     private boolean showingResults = false;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        gameView = findViewById(R.id.gameView);
+        gameViewModel = new ViewModelProvider(this).get(GameViewModel.class);
+
+        gameView = new GameView(this);
+        ((android.view.ViewGroup) findViewById(R.id.game_container)).addView(gameView);
+
         gameManager = new GameManager();
         gameManager.initialize(this);
 
+        gameView.setGameViewModel(gameViewModel);
+
+        if (!gameViewModel.isGameRunning()) {
+            gameViewModel.resetGame();
+            gameView.resetGame();
+        }
+
+        startGameLoop();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (gameView != null) {
+            gameView.saveStateToViewModel();
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (gameView != null) {
+            gameView.saveStateToViewModel();
+        }
+        recreateGameView();
+    }
+
+    private void recreateGameView() {
+        if (gameView != null) {
+            ((android.view.ViewGroup) gameView.getParent()).removeView(gameView);
+            gameView.cleanup();
+        }
+        gameView = new GameView(this);
+        gameView.setGameViewModel(gameViewModel);
+        ((android.view.ViewGroup) findViewById(R.id.game_container)).addView(gameView);
+
+        if (gameHandler != null) {
+            gameHandler.removeCallbacks(gameRunnable);
+        }
         startGameLoop();
     }
 
@@ -36,7 +82,7 @@ public class GameActivity extends AppCompatActivity {
         gameRunnable = new Runnable() {
             @Override
             public void run() {
-                if (gameRunning) {
+                if (gameViewModel.isGameRunning() && !showingResults) {
                     gameView.update();
                     checkGameOver();
                     gameHandler.postDelayed(this, UPDATE_INTERVAL);
@@ -50,13 +96,14 @@ public class GameActivity extends AppCompatActivity {
         if (showingResults) return;
 
         if (gameView.isGameOver()) {
-            gameRunning = false;
+            gameViewModel.setGameRunning(false);
             showingResults = true;
 
             if (gameHandler != null) {
                 gameHandler.removeCallbacks(gameRunnable);
             }
-
+            int gameDuration = gameManager.getRoundDuration();
+            gameManager.saveGameResult(gameView.getScore(), gameDuration);
             gameManager.saveHighScore(gameView.getScore());
 
             new Handler().postDelayed(() -> {
@@ -68,19 +115,6 @@ public class GameActivity extends AppCompatActivity {
     private void showGameResults() {
         if (!showingResults) return;
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> a1eefc9a6880679cf72d0dc0c533ada8b233deb9
-        // Сохраняем результат в базу данных
-        int gameDuration = gameManager.getRoundDuration(); // Длительность раунда в секундах
-        gameManager.saveGameResult(gameView.getScore(), gameDuration);
-
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 88605711446fabc01e22bcc44a491cebf1c9f072
->>>>>>> a1eefc9a6880679cf72d0dc0c533ada8b233deb9
         String result = "🎮 Игра завершена!\n\n" +
                 "🏆 Очки: " + gameView.getScore() + "\n" +
                 "🎯 Промахи: " + gameView.getMisses() + "\n" +
@@ -92,7 +126,6 @@ public class GameActivity extends AppCompatActivity {
                 .setMessage(result)
                 .setPositiveButton("🔄 Новая игра", (dialog, which) -> {
                     showingResults = false;
-                    gameRunning = true;
                     restartGame();
                 })
                 .setNegativeButton("🚪 В меню", (dialog, which) -> {
@@ -107,7 +140,9 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void restartGame() {
+        gameViewModel.resetGame();
         gameView.resetGame();
+        gameViewModel.setGameRunning(true);
         startGameLoop();
     }
 
@@ -153,19 +188,21 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        gameRunning = false;
+        gameViewModel.setGameRunning(false);
         if (gameHandler != null) {
             gameHandler.removeCallbacks(gameRunnable);
         }
-        gameManager.saveHighScore(gameView.getScore());
-        gameView.cleanup(); // Очищаем ресурсы
+        if (gameView != null) {
+            gameView.saveStateToViewModel();
+            gameView.cleanup();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         if (!showingResults) {
-            gameRunning = true;
+            gameViewModel.setGameRunning(true);
             startGameLoop();
         }
     }
@@ -173,10 +210,12 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        gameRunning = false;
+        gameViewModel.setGameRunning(false);
         if (gameHandler != null) {
             gameHandler.removeCallbacks(gameRunnable);
         }
-        gameView.cleanup(); // Очищаем ресурсы
+        if (gameView != null) {
+            gameView.cleanup();
+        }
     }
 }

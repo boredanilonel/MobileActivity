@@ -13,7 +13,7 @@ public class GyroscopeManager implements SensorEventListener {
     private GyroscopeListener listener;
     private boolean isGyroscopeActive = false;
     private long gyroscopeEndTime = 0;
-    private static final long GYROSCOPE_DURATION = 15000; // 15 секунд
+    private static final long GYROSCOPE_DURATION = 15000;
 
     public interface GyroscopeListener {
         void onTiltChanged(float tiltX, float tiltY);
@@ -83,7 +83,6 @@ public class GyroscopeManager implements SensorEventListener {
             float tiltX = gravity[0];
             float tiltY = gravity[1];
 
-            // Нормализуем значения
             tiltX = Math.max(-1, Math.min(1, tiltX / 10));
             tiltY = Math.max(-1, Math.min(1, tiltY / 10));
 
@@ -95,7 +94,6 @@ public class GyroscopeManager implements SensorEventListener {
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // Не используется
     }
 
     public void cleanup() {

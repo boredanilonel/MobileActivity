@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:padding="12dp"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:clickable="true"
+    android:focusable="true">
+
+    <ImageView
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_gold"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/widget_gold_rate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="..."
+        android:textColor="#FFD700"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/widget_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="руб/г"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        android:gravity="center" />
+
+</LinearLayout>

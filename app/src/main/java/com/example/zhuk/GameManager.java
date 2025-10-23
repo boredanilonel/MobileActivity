@@ -111,8 +111,6 @@ public class GameManager {
             }
         }.execute();
     }
-
-    // Получение топовых результатов
     public interface ScoresCallback {
         void onScoresLoaded(List<ScoreRecord> scores);
     }
@@ -131,17 +129,12 @@ public class GameManager {
             }
         }.execute();
     }
-
-    // Получение всех игроков
     public interface PlayersCallback {
         void onPlayersLoaded(List<Player> players);
     }
-<<<<<<< HEAD
     public interface CurrentPlayerCallback {
         void onCurrentPlayerSet(boolean success);
     }
-=======
->>>>>>> a1eefc9a6880679cf72d0dc0c533ada8b233deb9
 
     @SuppressLint("StaticFieldLeak")
     public void getAllPlayers(PlayersCallback callback) {
@@ -157,8 +150,6 @@ public class GameManager {
             }
         }.execute();
     }
-
-    // Сохранение нового игрока
     @SuppressLint("StaticFieldLeak")
     public void savePlayer(Player player, PlayerSaveCallback callback) {
         new AsyncTask<Void, Void, Long>() {
@@ -173,11 +164,9 @@ public class GameManager {
             }
         }.execute();
     }
-
     public interface PlayerSaveCallback {
         void onPlayerSaved(int playerId);
     }
-<<<<<<< HEAD
     public interface ClearCallback {
         void onClearCompleted();
     }
@@ -194,6 +183,4 @@ public class GameManager {
             callback.onClearCompleted();
         });
     }
-=======
->>>>>>> a1eefc9a6880679cf72d0dc0c533ada8b233deb9
 }

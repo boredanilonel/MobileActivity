@@ -27,8 +27,6 @@ public class FragmentSettings extends Fragment {
 
     private Button btnApply;
     private Button btnReset;
-
-    // Текущие значения настроек
     private int currentSpeed;
     private int currentMaxBugs;
     private int currentBonusInterval;
@@ -69,18 +67,15 @@ public class FragmentSettings extends Fragment {
         currentBonusInterval = prefs.getInt("bonus_interval", 30);
         currentRoundDuration = prefs.getInt("round_duration", 60);
 
-        // Устанавливаем значения в SeekBars
         seekBarSpeed.setProgress(currentSpeed - 1);
         seekBarMaxCockroaches.setProgress(currentMaxBugs - 1);
         seekBarBonusInterval.setProgress(currentBonusInterval - 10);
         seekBarRoundDuration.setProgress(currentRoundDuration - 30);
 
-        // Обновляем текстовые поля
         updateAllTextViews();
     }
 
     private void setupSeekBars() {
-        // Скорость игры (1-10)
         seekBarSpeed.setMax(9);
         seekBarSpeed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -92,7 +87,6 @@ public class FragmentSettings extends Fragment {
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
-        // Максимальное количество жуков (1-20)
         seekBarMaxCockroaches.setMax(19);
         seekBarMaxCockroaches.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -104,7 +98,6 @@ public class FragmentSettings extends Fragment {
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
-        // Интервал бонусов (10-60 секунд)
         seekBarBonusInterval.setMax(50);
         seekBarBonusInterval.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -116,7 +109,6 @@ public class FragmentSettings extends Fragment {
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
-        // Длительность раунда (30-120 секунд)
         seekBarRoundDuration.setMax(90);
         seekBarRoundDuration.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -158,7 +150,6 @@ public class FragmentSettings extends Fragment {
 
         editor.apply();
 
-        // Также сохраняем в GameManager для немедленного использования
         GameManager gameManager = new GameManager();
         gameManager.initialize(getContext());
         gameManager.saveGameSettings(currentSpeed, currentMaxBugs, currentBonusInterval, currentRoundDuration);
@@ -170,16 +161,13 @@ public class FragmentSettings extends Fragment {
         currentBonusInterval = 30;
         currentRoundDuration = 60;
 
-        // Обновляем SeekBars
         seekBarSpeed.setProgress(currentSpeed - 1);
         seekBarMaxCockroaches.setProgress(currentMaxBugs - 1);
         seekBarBonusInterval.setProgress(currentBonusInterval - 10);
         seekBarRoundDuration.setProgress(currentRoundDuration - 30);
 
-        // Обновляем текстовые поля
         updateAllTextViews();
 
-        // Сохраняем настройки по умолчанию
         saveSettings();
     }
 

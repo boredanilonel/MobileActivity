@@ -14,12 +14,8 @@ public class Player {
     private int difficultyLevel;
     private long birthDate;
     private String zodiacSign;
-
-    // Конструктор по умолчанию
     public Player() {
     }
-
-    // Конструктор для создания нового игрока
     public Player(String fullName, String gender, String course, int difficultyLevel, long birthDate, String zodiacSign) {
         this.fullName = fullName;
         this.gender = gender;
@@ -29,7 +25,6 @@ public class Player {
         this.zodiacSign = zodiacSign;
     }
 
-    // Геттеры и сеттеры
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 

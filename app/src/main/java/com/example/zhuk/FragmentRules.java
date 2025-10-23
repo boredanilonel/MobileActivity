@@ -27,12 +27,10 @@ public class FragmentRules extends Fragment {
     private void setupWebView() {
         webViewRules.getSettings().setJavaScriptEnabled(true);
 
-        // Отключаем масштабирование
         webViewRules.getSettings().setSupportZoom(false);
         webViewRules.getSettings().setBuiltInZoomControls(false);
         webViewRules.getSettings().setDisplayZoomControls(false);
 
-        // Настраиваем клиент для обработки ссылок внутри WebView
         webViewRules.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -52,12 +50,10 @@ public class FragmentRules extends Fragment {
 
     private void loadHtmlFromAssets() {
         try {
-            // Альтернативный способ: создаем файл в assets folder
             String htmlContent = getHtmlContent();
             webViewRules.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null);
 
         } catch (Exception e) {
-            // Если все способы не работают, показываем простой текст
             showErrorContent();
         }
     }

@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.game_menu, menu); // Убедитесь что R.menu.game_menu
+        getMenuInflater().inflate(R.menu.game_menu, menu);
         return true;
     }
     private void setupViewPager() {

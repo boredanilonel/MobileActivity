@@ -11,13 +11,13 @@ public class Bonus {
     private boolean isActive;
     private Rect bounds;
     private long spawnTime;
-    private static final long BONUS_DURATION = 8000; // 8 секунд на сбор
+    private static final long BONUS_DURATION = 8000;
     private BonusType type;
 
     public enum BonusType {
-        GYROSCOPE,  // Бонус гироскопа
-        SPEED_BOOST, // Ускорение
-        FREEZE       // Заморозка
+        GYROSCOPE,
+        SPEED_BOOST,
+        FREEZE
     }
 
     public Bonus(Bitmap bitmap, int x, int y, BonusType type) {
@@ -33,7 +33,7 @@ public class Bonus {
     }
 
     public void update() {
-        // Проверяем время жизни бонуса
+
         if (System.currentTimeMillis() - spawnTime > BONUS_DURATION) {
             isActive = false;
         }
@@ -41,7 +41,6 @@ public class Bonus {
 
     public void draw(Canvas canvas) {
         if (isActive) {
-            // Мигающий эффект перед исчезновением
             long timeLeft = BONUS_DURATION - (System.currentTimeMillis() - spawnTime);
             if (timeLeft > 2000 || (timeLeft / 200) % 2 == 0) {
                 canvas.drawBitmap(bitmap, x, y, null);
